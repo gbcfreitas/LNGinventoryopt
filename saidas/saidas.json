@@ -1,0 +1,107 @@
+{
+    "1": {
+        "nome": "Cen1",
+        "options": {
+            "NO_BOG": true,
+            "BOG_CTE": false,
+            "BOG_VAR": false,
+            "BOG_TEST": false,
+            "TIMELIMIT": 1000
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 2.8411026000976562,
+        "objective_value": 1055165920.6,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 276504480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_total": 1055165920.6
+        }
+    },
+    "2": {
+        "nome": "Cen1",
+        "options": {
+            "NO_BOG": false,
+            "BOG_CTE": true,
+            "BOG_VAR": false,
+            "BOG_TEST": false,
+            "TIMELIMIT": 1000
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 2.1124773025512695,
+        "objective_value": 1075457920.6,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 296796480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_total": 1075457920.6
+        }
+    },
+    "3": {
+        "nome": "Cen1",
+        "options": {
+            "NO_BOG": false,
+            "BOG_CTE": false,
+            "BOG_VAR": true,
+            "BOG_TEST": false,
+            "TIMELIMIT": 1000
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 540.6424367427826,
+        "objective_value": 1304875486.145011,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 466890925.02,
+            "custo_lcp": 496650000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 181529121.12501103,
+            "custo_total": 1304875486.145011
+        }
+    },
+    "4": {
+        "nome": "Cen1",
+        "options": {
+            "NO_BOG": false,
+            "BOG_CTE": true,
+            "BOG_VAR": false,
+            "BOG_TEST": true,
+            "TIMELIMIT": 1000
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 0.5449845790863037,
+        "objective_value": 1075457920.6,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 296796480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_total": 1075457920.6
+        }
+    },
+    "5": {
+        "nome": "Cen1",
+        "options": {
+            "NO_BOG": false,
+            "BOG_CTE": true,
+            "BOG_VAR": false,
+            "BOG_TEST": true,
+            "TIMELIMIT": 1000
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 0.286881685256958,
+        "objective_value": 1075457920.6,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 296796480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_total": 1075457920.6
+        }
+    }
+}
