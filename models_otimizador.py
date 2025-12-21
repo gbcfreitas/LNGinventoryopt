@@ -7,13 +7,13 @@ import json
 
 
 
-
 class otimizador:
     """Função para definição do otimizador ee xtração de resultados"""
 
     def __init__(self, nome, arquivo_json, arquivo_excel, options) -> None:
 
         self.nome = nome
+        self.run = options["RUN"]
         self.timeLimit = options["TIMELIMIT"]
         self.options = options
         logging.info(f"Carregando parâmetros para o cenário {nome}.")
@@ -45,7 +45,6 @@ class otimizador:
         
     @staticmethod
     def results_dict_to_list(variables_dict, var: str, index1, index2=None, index3=None):
-        logging.info(f"Extraindo resultados para a variável {var}.")
         if index1 and index2 and index3:
             # Uso de compreensão de listas para atribuir os valores
             var_values = [
@@ -92,9 +91,13 @@ class otimizador:
         entradas.update(parametros_modelo)
         entradas["K"] = entradas["K"] * entradas["DOLAR"]
         entradas["PDEM"] = entradas["PDEM"] * entradas["DOLAR"]
-        if self.options["BOG_TEST"]:
-            entradas["x"] = variaveis_fixadas["x"]
-            entradas["y"] = variaveis_fixadas["y"]
+        if self.options["LOCK_POLICY"]:
+            # if self.options["SOLVER"]
+            entradas["y"] = variaveis_fixadas[self.options["SOLVER"]]["y"]
+            
+        if self.options["CAPCOST"]:
+            entradas["r"] = self.options["CAPCOST_TAX"]
+            entradas["P"] = self.options["CAPCOST_PRICE"]
 
         for j, contrato in params_por_contrato.items():
             for param, valor in contrato.items():
@@ -323,75 +326,82 @@ class otimizador:
             self.entradas["LCP"],
         )
 
-
+        if self.options["CAPCOST"]:
+            r = self.entradas["r"]
+            P = self.entradas["P"]
 
         logging.info("Iniciando definição do modelo de otimização.")
        
-        # # BP = self.params_operacao["BOG_PRODUCTION_m³GNL"]
-        # PS_MEAN = np.array(list(self.params_modelo["NR_DICT_PRECO_CONTRATO_SPOT"].values())).mean()
 
         ## VARIAVEIS
-        
-        if self.options["BOG_TEST"] == False:
+        if self.options["LOCK_POLICY"] == False:  
             y = pulp.LpVariable.dicts("y", (J, T), cat="Binary")
-            
         else:
-            # x = self.entradas["x"]
-            y = self.entradas["y"]
+            # y = self.entradas["y"]
+            y = pulp.LpVariable.dicts("y", (J, T), cat="Binary")
+            for j in J:
+                for t in T:
+                    y[j][t].setInitialValue(self.entradas["y"][j][t])
+                    y[j][t].fixValue()
+        
             
         x = pulp.LpVariable.dicts("x", T, lowBound=0, upBound=Q2)
-        logging.info("Variáveis de decisão x e y definidas.")
         s = pulp.LpVariable.dicts("s", T, lowBound=0, upBound=S_MAX)
-        # s_min = pulp.LpVariable.dicts("s_min", T, lowBound=0, upBound=S_FLEX)
+        s_min = pulp.LpVariable.dicts("s_min", T, lowBound=0, upBound=S_FLEX)
         b = pulp.LpVariable.dicts("b", T, lowBound=0)
         by = pulp.LpVariable.dicts("by", (T, N), cat="Binary")
         cc_acc = pulp.LpVariable.dicts("cc_acc", (TP, T), lowBound=0)
         topc = pulp.LpVariable.dicts("topc", (TP, M, T), cat="Binary")
         ca_acc = pulp.LpVariable.dicts("ca_acc", (J1, T), lowBound=0)
         lgc = pulp.LpVariable.dicts("lgc", (J1, C, T), cat="Binary")
-        
-        
         f = pulp.LpVariable.dicts("f", (CF, T), lowBound=0)
         fy = pulp.LpVariable.dicts("fy", (CF, C, T), lowBound=0)
-        # d = pulp.LpVariable.dicts("d", (J, I, T), lowBound=0)
-        # rv = pulp.LpVariable.dicts("rv", (J, T), lowBound=0)
-        # k = pulp.LpVariable.dicts("k", (J, T), cat="Binary")
-        # z = pulp.LpVariable.dicts("z", T, cat="Binary")
-        # if self.options["BOG_TEST"]:
+
+        if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
+            v = pulp.LpVariable.dicts("v", T, lowBound=0)
             
-            
-            
+        logging.info("Teste 1 - Variáveis definidas com sucesso.")    
         # DEFINICAO DO PROBLEMA
+        if self.options["SOLVER"] == "PULP_CBC_CMD":
+            solver = pulp.PULP_CBC_CMD(timeLimit=self.timeLimit,logPath=f"saidas/cbc_run{self.run}.log")
+        elif self.options["SOLVER"] == "SCIP_CMD":
+            solver = pulp.SCIP_CMD(timeLimit=self.timeLimit, logPath=f"saidas/scip_run{self.run}.log")
+        elif self.options["SOLVER"] == "GLPK_CMD":
+            solver = pulp.GLPK_CMD(timeLimit=self.timeLimit,keepFiles=True)
+        elif self.options["SOLVER"] == "CPLEX_CMD":
+            solver = pulp.CPLEX_CMD(timeLimit=self.timeLimit, msg=True, options=[f"mip tolerances integrality 1e-9"])
         
-        solver = pulp.PULP_CBC_CMD(timeLimit=self.timeLimit,logPath="cbc.log")
+        logging.info("Teste 2 - Solver definido com sucesso.")    
         # solver = pulp.PULP_CBC_CMD(threads = 6, timeLimit= 60)
         prob = pulp.LpProblem("Simulacao_cenarios", pulp.LpMinimize)
         
+        logging.info("Teste 3 - Problema definido com sucesso.")    
         # FUNCAO OBJETIVO
         def objetive_func():
             total = 0
             for t in T:
-                total += pulp.lpSum(y[j][t] for j in J) * K # custo fixo
-                # total += H * s[t] * PS_MEAN # custo de holding
-                total += x[t] * PS[(t)] # custo compra spot
-                total += pulp.lpSum(
-                    LCP[(j, c, t)] * W[(j, t)] * lgc[j][c][t] for j in TP for c in C
-                ) # custo compra LCP 
-                total += pulp.lpSum(y[j][t] * PDEM * DEM[(j, t)] for j in TP) # custo demurrage
-                total += pulp.lpSum(
-                    topc[j][m][t] * W[(j, t)] * TPT[(j, m, t)] for j in TP for m in M
-                ) # custo take or pay
-                # total += sum(DW[(j, i)] * d[j][i][t] * PS_MEAN for i in I for j in J)
-                # total += s_min[t] * SW * PS_MEAN
-                # total += z[t] * PSPEQ
-                # total += pulp.lpSum(k[j][t] * PLOCK for j in TP)
-                # total += pulp.lpSum(fy[j][c][t] * LCP[(j, c, t)] for j in CF for c in C)
+                total += s[t]
+                # total += pulp.lpSum(y[j][t] for j in J) * K
+                # total += x[t] * PS[(t)]
+                # total += pulp.lpSum(
+                #     LCP[(j, c, t)] * W[(j, t)] * lgc[j][c][t] for j in TP for c in C
+                # )
+                # total += pulp.lpSum(y[j][t] * PDEM * DEM[(j, t)] for j in TP)
+                # total += pulp.lpSum(
+                #     topc[j][m][t] * W[(j, t)] * TPT[(j, m, t)] for j in TP for m in M
+                # )
+                
+                # if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V1":
+                #     total  += P * r * s[t]
+                # elif self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
+                #     total += v[t] * r
+                    
+
             return total
 
         prob += objetive_func(), "Custo Total"
 
-        # @staticmethod
-        # def add_restricoes_balanco_inventario_bog_cte(prob, s, x, y, f, D, W, T, I, CF, TP, S0):
+
 
         # Balanço de massa sem considerar bog
         def constr_store_balance_no_bog(prob, T, s, x, y, f, D, W, I, CF, TP, S0):
@@ -400,14 +410,12 @@ class otimizador:
                     prob += (s[t] == S0 + x[t]  + pulp.lpSum(
                         W[(j, t)] * y[j][t] for j in TP
                     ) - pulp.lpSum(D[(i, t)] for i in I),  f"Store_Balance_Bog_Cte_Constraint_{t}")
-                    # + pulp.lpSum(f[j][t] for j in CF)
+
                 else:
                     prob += (s[t] == s[t - 1] + x[t]  + pulp.lpSum(W[(j, t)] * y[j][t] for j in TP) - pulp.lpSum(
                         D[(i, t)] for i in I
                     ) ,  f"Store_Balance_Bog_Cte_Constraint_{t}")
-                    # + pulp.lpSum(
-                    #     f[j][t] for j in CF
-                    # )
+
                     
 
 
@@ -417,14 +425,12 @@ class otimizador:
                     prob += (s[t] == S0 + x[t]  + pulp.lpSum(
                         W[(j, t)] * y[j][t] for j in TP
                     ) - pulp.lpSum(D[(i, t)] for i in I) - b[t] * IDLE[t] - BP * (1 - IDLE[t]),  f"Store_Balance_Bog_Cte_Constraint_{t}")
-                # + pulp.lpSum(f[j][t] for j in CF)
+ 
                 else:
                     prob += (s[t] == s[t - 1] + x[t]  + pulp.lpSum(W[(j, t)] * y[j][t] for j in TP) - pulp.lpSum(
                         D[(i, t)] for i in I
                     ) - b[t] * IDLE[t] - BP * (1 - IDLE[t]),  f"Store_Balance_Bog_Cte_Constraint_{t}")
-                # + pulp.lpSum(
-                #         f[j][t] for j in CF
-                #     )
+
 
                 # Tipo de modelo
         def constr_bog_level(prob, T, IDLE, s, by, VL, VH, S_MAX, b, BI, BP):
@@ -462,14 +468,13 @@ class otimizador:
                 
         
 
-        def constr_store_capacity_lower_prod(prob, T, S_MIN_PROD, SMIN_FLEX, s, IDLE):
+        def constr_store_capacity_lower_prod(prob, T, S_MIN_PROD, SMIN_FLEX, s, IDLE, s_min):
             for t in T:
                 if SMIN_FLEX:
                     prob += (
-                        s[t] >= S_MIN_PROD * (1 - IDLE[t]) ,
+                        s[t] >= S_MIN_PROD * (1 - IDLE[t]) - s_min[t],
                         f"Store_Capacity_L_Prod_Constraint_{t}",
                     )
-                    # - s_min[t]
                 else:
                     prob += (
                         s[t] >= S_MIN_PROD * (1 - IDLE[t]),
@@ -593,7 +598,7 @@ class otimizador:
             for idx, constraint in enumerate(constr_topc_faixa):
                 prob += constraint, f"Topc_Faixa_Constraint_{idx}"
 
-            # def constr_topc_within_interval(prob):
+
             for j in TP:
                 for interval in INT[j]:
                     for t in range(interval[0], interval[1]):
@@ -655,21 +660,22 @@ class otimizador:
                 prob += x[t] <= Q2 * y[len(J) - 1][t], f"Spot_Constraint_{t}"
 
         
-       
-        logging.info("Definição das restrições do modelo de otimização.")   
-        # def constr_spot_size_lower(prob, T, Q1, Q2):
-        #     for t in T:
-        #         prob += (
-        #             x[t] - Q1 * y[len(J) - 1][t] <= Q2 * (1 - z[t]),
-        #             f"Spot_Size_Lower_Constraint_1_{t}",
-        #         )
-        #         prob += (
-        #             Q1 * y[len(J) - 1][t] - x[t] <= Q2 * z[t],
-        #             f"Spot_Size_Lower_Constraint_2_{t}",
-        #         )
+        # Custo Financeiro de Capital
+        def constr_capital_cost(prob, T, v, r, P):
+            for t in T:
+                if t == 0:
+                    prob += (v[t] == x[t] * P  + pulp.lpSum(
+                        W[(j, t)] * y[j][t] * P for j in TP
+                    ) - pulp.lpSum(D[(i, t)] * P for i in I))
 
-        
-        # Montar problema
+                else:
+                    prob += (v[t] == v[t-1] + v[t-1]*r + x[t] * P  + pulp.lpSum(
+                        W[(j, t)] * y[j][t] * P for j in TP
+                    ) - pulp.lpSum(D[(i, t)] * P for i in I), f"Capital_Cost_Constraint_{t}")
+     
+
+        # Montar problema 
+        # Restrições BOG
         if self.options["NO_BOG"]:
             constr_store_balance_no_bog(prob, T, s, x, y, f, D, W, I, CF, TP, S0)
             
@@ -681,22 +687,24 @@ class otimizador:
             constr_store_balance_bog(prob, T, s, x, y, f, D, W, I, CF, TP, S0, b, IDLE, BP)
             constr_bog_level(prob, T, IDLE, s, by, VL, VH, S_MAX, b, BI, BP)
         
+        # Outras opções
+        if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
+            constr_capital_cost(prob, T, v, r, P)
+        
         
         constr_store_capacity_lower_idle(prob, T, S_MIN_IDLE)
-        constr_store_capacity_lower_prod(prob, T, S_MIN_PROD, SMIN_FLEX, s, IDLE,)
+        constr_store_capacity_lower_prod(prob, T, S_MIN_PROD, SMIN_FLEX, s, IDLE, s_min)
         constr_gap_between_arrival(prob, T, J, y)
         constr_interval_limit_one_load(prob, T, TP, INT, y)
         constr_lng_cost(prob, T, J1, TP, C, LCL, LCH, lgc, ca_acc, W, CA_INI, f)
         constr_top(prob, T, TP, M, VT, cc_acc, W, CC_INI, topc)
-        # contr_flex_fee(prob, T, CF, C, F_MIN, F_MAX, f, fy, lgc)
         constr_spot_size_high(prob, T, Q2)
-        # constr_spot_size_lower(prob, T, Q1, Q2)
-
-        logging.info("Iniciando resolução do modelo de otimização.")
+        
+            
         prob.solve(solver)
-        logging.info("Resolução finalizada.")
         self.model = prob
         self.solver = solver
+        logging.info("Teste 6 - Problema resolvido com sucesso.") 
         return 
 
 
@@ -725,10 +733,10 @@ class otimizador:
                                       "objective_value": float(self.model.objective.value()),
                                       "solution_time": self.model.solutionTime})
         
-        if self.options["BOG_TEST"] == True:
+        if self.options["LOCK_POLICY"] == True:
             self.resultado_modelo.update({
-                # 'x': self.entradas["x"],
-                                          'y': self.entradas["y"]})
+
+            'y': self.entradas["y"]})
                 
         else:        
             
@@ -747,13 +755,7 @@ class otimizador:
         self.resultado_modelo.update(
             {"s": otimizador.results_dict_to_list(variables_dict, var="s", index1=T)}
         )
-        # self.resultado_modelo.update(
-        #     {
-        #         "s_min": otimizador.results_dict_to_list(
-        #             variables_dict, var="s_min", index1=T
-        #         )
-        #     }
-        # )
+
         if self.options["NO_BOG"] == False:
             self.resultado_modelo.update(
                 {"b": otimizador.results_dict_to_list(variables_dict, var="b", index1=T)}
@@ -787,20 +789,7 @@ class otimizador:
                 )
             }
         )
-        # self.resultado_modelo.update(
-        #     {
-        #         "f": otimizador.results_dict_to_list(
-        #             variables_dict, var="f", index1=CF, index2=T
-        #         )
-        #     }
-        # )
-        # self.resultado_modelo.update(
-        #     {
-        #         "fy": otimizador.results_dict_to_list(
-        #             variables_dict, var="fy", index1=CF, index2=C, index3=T
-        #         )
-        #     }
-        # )
+
 
         if (
             1 in self.entradas["IDLE"]
@@ -813,9 +802,69 @@ class otimizador:
                     )
                 }
             )
+            
+        if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
+            self.resultado_modelo.update(
+                {"v": otimizador.results_dict_to_list(variables_dict, var="v", index1=T)}
+            )
 
         
         logging.info(f"Extração finalizada. ")
         
+    def calcula_custos(self):
         
- 
+        # INDICES E CONJUNTOS
+        T, I, J, M, C, TP, CF, N = (
+            self.entradas["T"],
+            self.entradas["I"],
+            self.entradas["J"],
+            self.entradas["M"],
+            self.entradas["C"],
+            self.entradas["TP"],
+            self.entradas["CF"],
+            self.entradas["N"],
+        )
+        J1 = range(len(self.entradas["J"]) - 1)
+
+        # informações de custos da função objetivo
+        PS = self.entradas["PS"]
+        custo_fixo = sum([pulp.lpSum(self.resultado_modelo['y'][j][t] for j in J) * self.entradas["K"] for t in T])
+
+        custo_fixo = custo_fixo.value()
+    
+        custo_spot = sum([self.resultado_modelo['x'][t] * PS[t] for t in T])
+        
+        custo_lcp = sum([
+            self.entradas['LCP'][(j, c, t)] * self.entradas['W'][(j, t)] * self.resultado_modelo["lgc"][j][c][t]
+            for j in TP for c in C for t in T])
+        
+        custo_demurrage = sum([
+            self.resultado_modelo['y'][j][t] * self.entradas["PDEM"] * self.entradas["DEM"][(j, t)]
+            for j in TP for t in T])
+        
+        custo_top = sum([
+            self.resultado_modelo['topc'][j][m][t] * self.entradas['W'][(j, t)] * self.entradas["TPT"][(j, m, t)]
+            for j in TP for m in M for t in T])
+
+        if self.options['CAPCOST']:
+            custo_cap = sum([self.entradas["H"] * self.resultado_modelo['s'][t] for t in T])
+        else:
+            custo_cap = 0
+            
+        custo_total = custo_fixo + custo_spot + custo_lcp + custo_demurrage + custo_top
+        
+        if self.options['CAPCOST']:
+            custo_total += custo_cap
+        
+        
+        custos = {
+            "custo_fixo": custo_fixo,
+            "custo_spot": custo_spot,
+            "custo_lcp": custo_lcp,
+            "custo_demurrage": custo_demurrage,
+            "custo_top": custo_top,
+            "custo_cap": custo_cap,
+            "custo_total": custo_total
+        }
+       
+        return custos

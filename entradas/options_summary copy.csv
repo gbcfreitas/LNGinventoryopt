@@ -1,0 +1,8 @@
+run,NO_BOG,BOG_CTE,BOG_VAR,LOCK_POLICY,TIMELIMIT,CAPCOST
+1,True,False,False,False,1000,False
+2,False,True,False,False,1000,False
+3,False,False,True,False,1000,False
+4,False,True,False,True,1000,False
+5,False,False,True,True,3000,False
+6,True,False,False,False,3000,True
+7,True,False,False,True,3000,True

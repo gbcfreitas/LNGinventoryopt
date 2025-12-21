@@ -1,107 +1,440 @@
 {
     "1": {
-        "nome": "Cen1",
         "options": {
+            "NOME": "Cen1",
             "NO_BOG": true,
             "BOG_CTE": false,
             "BOG_VAR": false,
-            "BOG_TEST": false,
-            "TIMELIMIT": 1000
+            "LOCK_POLICY": false,
+            "CAPCOST": false,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0003638248528394,
+            "CAPCOST_PRICE": 812,
+            "CAPCOST_version": "V1",
+            "TIMELIMIT": 10800,
+            "RUN": 1
         },
         "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
-        "solution_time": 2.8411026000976562,
-        "objective_value": 1055165920.6,
+        "solution_time": 0.9711613655090332,
+        "objective_value": 1049465920.6,
         "custos": {
             "custo_fixo": 118374400.00000001,
-            "custo_spot": 276504480.6,
+            "custo_spot": 270804480.6,
             "custo_lcp": 618856000.0,
             "custo_demurrage": 41431040.0,
             "custo_top": 0.0,
-            "custo_total": 1055165920.6
+            "custo_cap": 0,
+            "custo_total": 1049465920.6
         }
     },
     "2": {
-        "nome": "Cen1",
         "options": {
+            "NOME": "Cen1",
             "NO_BOG": false,
             "BOG_CTE": true,
             "BOG_VAR": false,
-            "BOG_TEST": false,
-            "TIMELIMIT": 1000
+            "LOCK_POLICY": false,
+            "CAPCOST": false,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0003638248528394,
+            "CAPCOST_PRICE": 812,
+            "TIMELIMIT": 10800,
+            "RUN": 2
         },
         "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
-        "solution_time": 2.1124773025512695,
-        "objective_value": 1075457920.6,
+        "solution_time": 9.119672060012817,
+        "objective_value": 1069757920.6,
         "custos": {
             "custo_fixo": 118374400.00000001,
-            "custo_spot": 296796480.6,
+            "custo_spot": 291096480.6,
             "custo_lcp": 618856000.0,
             "custo_demurrage": 41431040.0,
             "custo_top": 0.0,
-            "custo_total": 1075457920.6
+            "custo_cap": 0,
+            "custo_total": 1069757920.6
         }
     },
     "3": {
-        "nome": "Cen1",
         "options": {
+            "NOME": "Cen1",
             "NO_BOG": false,
             "BOG_CTE": false,
             "BOG_VAR": true,
-            "BOG_TEST": false,
-            "TIMELIMIT": 1000
+            "LOCK_POLICY": false,
+            "CAPCOST": false,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0003638248528394,
+            "CAPCOST_PRICE": 812,
+            "TIMELIMIT": 10800,
+            "RUN": 3
         },
         "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
-        "solution_time": 540.6424367427826,
-        "objective_value": 1304875486.145011,
+        "solution_time": 9.90655517578125,
+        "objective_value": 1075635634.0144005,
         "custos": {
             "custo_fixo": 118374400.00000001,
-            "custo_spot": 466890925.02,
-            "custo_lcp": 496650000.0,
+            "custo_spot": 296974194.01440054,
+            "custo_lcp": 618856000.0,
             "custo_demurrage": 41431040.0,
-            "custo_top": 181529121.12501103,
-            "custo_total": 1304875486.145011
+            "custo_top": 0.0,
+            "custo_cap": 0,
+            "custo_total": 1075635634.0144005
         }
     },
     "4": {
-        "nome": "Cen1",
         "options": {
+            "NOME": "Cen1",
             "NO_BOG": false,
             "BOG_CTE": true,
             "BOG_VAR": false,
-            "BOG_TEST": true,
-            "TIMELIMIT": 1000
+            "LOCK_POLICY": true,
+            "CAPCOST": false,
+            "CAPCOST_VALUE": NaN,
+            "TIMELIMIT": 7200,
+            "RUN": 4
         },
         "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
-        "solution_time": 0.5449845790863037,
-        "objective_value": 1075457920.6,
+        "solution_time": 0.6696562767028809,
+        "objective_value": 1069757920.6,
         "custos": {
             "custo_fixo": 118374400.00000001,
-            "custo_spot": 296796480.6,
+            "custo_spot": 291096480.6,
             "custo_lcp": 618856000.0,
             "custo_demurrage": 41431040.0,
             "custo_top": 0.0,
-            "custo_total": 1075457920.6
+            "custo_cap": 0,
+            "custo_total": 1069757920.6
         }
     },
     "5": {
-        "nome": "Cen1",
         "options": {
+            "NOME": "Cen1",
             "NO_BOG": false,
-            "BOG_CTE": true,
-            "BOG_VAR": false,
-            "BOG_TEST": true,
-            "TIMELIMIT": 1000
+            "BOG_CTE": false,
+            "BOG_VAR": true,
+            "LOCK_POLICY": true,
+            "CAPCOST": false,
+            "CAPCOST_VALUE": NaN,
+            "TIMELIMIT": 7200,
+            "RUN": 5
         },
         "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
-        "solution_time": 0.286881685256958,
-        "objective_value": 1075457920.6,
+        "solution_time": 0.3216981887817383,
+        "objective_value": 1075835554.72,
         "custos": {
             "custo_fixo": 118374400.00000001,
-            "custo_spot": 296796480.6,
+            "custo_spot": 297174114.72,
             "custo_lcp": 618856000.0,
             "custo_demurrage": 41431040.0,
             "custo_top": 0.0,
-            "custo_total": 1075457920.6
+            "custo_cap": 0,
+            "custo_total": 1075835554.72
+        }
+    },
+    "6": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": true,
+            "BOG_CTE": false,
+            "BOG_VAR": false,
+            "LOCK_POLICY": false,
+            "CAPCOST": true,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0003638248528394,
+            "CAPCOST_PRICE": 812,
+            "CAPCOST_version": "V1",
+            "TIMELIMIT": 10800,
+            "RUN": 6
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 1.0116360187530518,
+        "objective_value": 1055089640.7797836,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 270804480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_cap": NaN,
+            "custo_total": NaN
+        }
+    },
+    "7": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": true,
+            "BOG_CTE": false,
+            "BOG_VAR": false,
+            "LOCK_POLICY": true,
+            "CAPCOST": true,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0003638248528394783,
+            "CAPCOST_PRICE": 812,
+            "CAPCOST_version": "V1",
+            "TIMELIMIT": 10800,
+            "RUN": 7
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 0.3887653350830078,
+        "objective_value": 1055404266.6244582,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 270804480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_cap": NaN,
+            "custo_total": NaN
+        }
+    },
+    "8": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": true,
+            "BOG_CTE": false,
+            "BOG_VAR": false,
+            "LOCK_POLICY": false,
+            "CAPCOST": true,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0005547647074928275,
+            "CAPCOST_PRICE": 812,
+            "CAPCOST_version": "V1",
+            "TIMELIMIT": 10800,
+            "RUN": 8
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 1.0476696491241455,
+        "objective_value": 1058041039.7987251,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 270804480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_cap": NaN,
+            "custo_total": NaN
+        }
+    },
+    "9": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": true,
+            "BOG_CTE": false,
+            "BOG_VAR": false,
+            "LOCK_POLICY": true,
+            "CAPCOST": true,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0005547647074928275,
+            "CAPCOST_PRICE": 812,
+            "CAPCOST_version": "V1",
+            "TIMELIMIT": 10800,
+            "RUN": 9
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 0.6019706726074219,
+        "objective_value": 1058520785.2403255,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 270804480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_cap": NaN,
+            "custo_total": NaN
+        }
+    },
+    "10": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": false,
+            "BOG_CTE": true,
+            "BOG_VAR": false,
+            "LOCK_POLICY": false,
+            "CAPCOST": true,
+            "CAPCOST_VALUE": 0.21,
+            "TIMELIMIT": 7200
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 5.474846839904785,
+        "objective_value": 1073748547.0615,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 291096480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_cap": 3990626.4615,
+            "custo_total": 1073748547.0615
+        }
+    },
+    "11": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": false,
+            "BOG_CTE": true,
+            "BOG_VAR": false,
+            "LOCK_POLICY": true,
+            "CAPCOST": true,
+            "CAPCOST_VALUE": 0.21,
+            "TIMELIMIT": 7200
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 0.24494695663452148,
+        "objective_value": 1073919571.0615,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 291096480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_cap": 4161650.4615,
+            "custo_total": 1073919571.0615
+        }
+    },
+    "12": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": true,
+            "BOG_CTE": false,
+            "BOG_VAR": false,
+            "LOCK_POLICY": false,
+            "CAPCOST": false,
+            "CAPCOST_VALUE": 0.33,
+            "SOLVER": "SCIP_CMD",
+            "TIMELIMIT": 7200,
+            "RUN": 12
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 6.439530372619629,
+        "objective_value": 1049465920.6,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 270804480.6,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_cap": 0,
+            "custo_total": 1049465920.6
+        }
+    },
+    "14": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": true,
+            "BOG_CTE": false,
+            "BOG_VAR": false,
+            "LOCK_POLICY": false,
+            "CAPCOST": true,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "PULP_CBC_CMD",
+            "CAPCOST_TAX": 0.0003638248528394783,
+            "CAPCOST_PRICE": 812,
+            "TIMELIMIT": 7200,
+            "RUN": 14
+        },
+        "status": "Solu\u00e7\u00e3o encontrada",
+        "solution_time": 7202.240652322769,
+        "objective_value": 2118737042.2454622,
+        "custos": {
+            "custo_fixo": 177561600.00000003,
+            "custo_spot": 1182775024.14,
+            "custo_lcp": 0.0,
+            "custo_demurrage": 0.0,
+            "custo_top": 754358242.250022,
+            "custo_cap": NaN,
+            "custo_total": NaN
+        }
+    },
+    "16": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": false,
+            "BOG_CTE": false,
+            "BOG_VAR": true,
+            "LOCK_POLICY": false,
+            "CAPCOST": false,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0003638248528394783,
+            "CAPCOST_PRICE": 812,
+            "TIMELIMIT": 10800,
+            "RUN": 16
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 10.238696336746216,
+        "objective_value": 1075635634.0144005,
+        "custos": {
+            "custo_fixo": 118374400.00000001,
+            "custo_spot": 296974194.01440054,
+            "custo_lcp": 618856000.0,
+            "custo_demurrage": 41431040.0,
+            "custo_top": 0.0,
+            "custo_cap": 0,
+            "custo_total": 1075635634.0144005
+        }
+    },
+    "15": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": true,
+            "BOG_CTE": false,
+            "BOG_VAR": false,
+            "LOCK_POLICY": false,
+            "CAPCOST": true,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0003638248528394783,
+            "CAPCOST_PRICE": 812,
+            "TIMELIMIT": 10800,
+            "RUN": 15
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 2707.5324790477753,
+        "objective_value": 2103923075.2937725,
+        "custos": {
+            "custo_fixo": 162764800.00000003,
+            "custo_spot": 1182715358.6388235,
+            "custo_lcp": 0.0,
+            "custo_demurrage": 0.0,
+            "custo_top": 754358242.250022,
+            "custo_cap": NaN,
+            "custo_total": NaN
+        }
+    },
+    "20": {
+        "options": {
+            "NOME": "Cen1",
+            "NO_BOG": true,
+            "BOG_CTE": false,
+            "BOG_VAR": false,
+            "LOCK_POLICY": false,
+            "CAPCOST": false,
+            "CAPCOST_VALUE": NaN,
+            "SOLVER": "CPLEX_CMD",
+            "CAPCOST_TAX": 0.0003638248528394783,
+            "CAPCOST_PRICE": 812,
+            "CAPCOST_version": "V2",
+            "TIMELIMIT": 10800,
+            "RUN": 20
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 2.2219021320343018,
+        "objective_value": 5063283.15,
+        "custos": {
+            "custo_fixo": 443904000.00000006,
+            "custo_spot": 1126374480.6,
+            "custo_lcp": 0.0,
+            "custo_demurrage": 0.0,
+            "custo_top": 754358242.250022,
+            "custo_cap": 0,
+            "custo_total": 2324636722.850022
         }
     }
 }
