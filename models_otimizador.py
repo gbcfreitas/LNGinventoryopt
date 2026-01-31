@@ -41,6 +41,7 @@ class otimizador:
             "f": [],
             "fy": [],
             "by": [],
+            "v": [],
         }
         
     @staticmethod
@@ -95,9 +96,14 @@ class otimizador:
             # if self.options["SOLVER"]
             entradas["y"] = variaveis_fixadas[self.options["SOLVER"]]["y"]
             
-        if self.options["CAPCOST"]:
-            entradas["r"] = self.options["CAPCOST_TAX"]
-            entradas["P"] = self.options["CAPCOST_PRICE"]
+        # if self.options["CAPCOST"]:
+        entradas["r"] = self.options["CAPCOST_TAX"]
+        entradas["P"] = self.options["CAPCOST_PRICE"]
+        
+        #  ### TESTE PARA AVALIAR FOBJ DA V2 NA RUN 1 ##
+        # entradas["r"] = self.options["CAPCOST_TAX"]
+        # entradas["P"] = self.options["CAPCOST_PRICE"]
+        #############################################
 
         for j, contrato in params_por_contrato.items():
             for param, valor in contrato.items():
@@ -326,9 +332,9 @@ class otimizador:
             self.entradas["LCP"],
         )
 
-        if self.options["CAPCOST"]:
-            r = self.entradas["r"]
-            P = self.entradas["P"]
+        # if self.options["CAPCOST"]:
+        r = self.entradas["r"]
+        P = self.entradas["P"]
 
         logging.info("Iniciando definição do modelo de otimização.")
        
@@ -356,11 +362,19 @@ class otimizador:
         lgc = pulp.LpVariable.dicts("lgc", (J1, C, T), cat="Binary")
         f = pulp.LpVariable.dicts("f", (CF, T), lowBound=0)
         fy = pulp.LpVariable.dicts("fy", (CF, C, T), lowBound=0)
+        v = pulp.LpVariable.dicts("v", T)
+        
+        # ### TESTE PARA AVALIAR FOBJ DA V2 NA RUN 1 ##
+        # v = pulp.LpVariable.dicts("v", T, lowBound=0)
+        # fobj_fake = pulp.LpVariable("fobj_fake", lowBound=0)
+        # r = self.entradas["r"]
+        # P = self.entradas["P"]
+        # ###### ######################################
 
-        if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
-            v = pulp.LpVariable.dicts("v", T, lowBound=0)
+        # if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
+        
             
-        logging.info("Teste 1 - Variáveis definidas com sucesso.")    
+        logging.info("Variáveis definidas com sucesso.")    
         # DEFINICAO DO PROBLEMA
         if self.options["SOLVER"] == "PULP_CBC_CMD":
             solver = pulp.PULP_CBC_CMD(timeLimit=self.timeLimit,logPath=f"saidas/cbc_run{self.run}.log")
@@ -369,32 +383,32 @@ class otimizador:
         elif self.options["SOLVER"] == "GLPK_CMD":
             solver = pulp.GLPK_CMD(timeLimit=self.timeLimit,keepFiles=True)
         elif self.options["SOLVER"] == "CPLEX_CMD":
-            solver = pulp.CPLEX_CMD(timeLimit=self.timeLimit, msg=True, options=[f"mip tolerances integrality 1e-9"])
+            solver = pulp.CPLEX_CMD(timeLimit=self.timeLimit, logPath=f"saidas/cplex_run{self.run}.log" )
         
-        logging.info("Teste 2 - Solver definido com sucesso.")    
+        logging.info("Solver definido com sucesso.")    
         # solver = pulp.PULP_CBC_CMD(threads = 6, timeLimit= 60)
         prob = pulp.LpProblem("Simulacao_cenarios", pulp.LpMinimize)
         
-        logging.info("Teste 3 - Problema definido com sucesso.")    
+        logging.info("Problema definido com sucesso.")    
         # FUNCAO OBJETIVO
         def objetive_func():
             total = 0
             for t in T:
-                total += s[t]
-                # total += pulp.lpSum(y[j][t] for j in J) * K
-                # total += x[t] * PS[(t)]
-                # total += pulp.lpSum(
-                #     LCP[(j, c, t)] * W[(j, t)] * lgc[j][c][t] for j in TP for c in C
-                # )
-                # total += pulp.lpSum(y[j][t] * PDEM * DEM[(j, t)] for j in TP)
-                # total += pulp.lpSum(
-                #     topc[j][m][t] * W[(j, t)] * TPT[(j, m, t)] for j in TP for m in M
-                # )
+                # total += s[t]
+                total += pulp.lpSum(y[j][t] for j in J) * K
+                total += x[t] * PS[(t)]
+                total += pulp.lpSum(
+                    LCP[(j, c, t)] * W[(j, t)] * lgc[j][c][t] for j in TP for c in C
+                )
+                total += pulp.lpSum(y[j][t] * PDEM * DEM[(j, t)] for j in TP)
+                total += pulp.lpSum(
+                    topc[j][m][t] * W[(j, t)] * TPT[(j, m, t)] for j in TP for m in M
+                )
                 
-                # if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V1":
-                #     total  += P * r * s[t]
-                # elif self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
-                #     total += v[t] * r
+                if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V1":
+                    total  += P * r * s[t]
+                elif self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
+                    total += v[t] * r
                     
 
             return total
@@ -661,10 +675,10 @@ class otimizador:
 
         
         # Custo Financeiro de Capital
-        def constr_capital_cost(prob, T, v, r, P):
+        def constr_capital_cost(prob, T, v, r, P,s):
             for t in T:
                 if t == 0:
-                    prob += (v[t] == x[t] * P  + pulp.lpSum(
+                    prob += (v[t] == s[t] * P + x[t] * P  + pulp.lpSum(
                         W[(j, t)] * y[j][t] * P for j in TP
                     ) - pulp.lpSum(D[(i, t)] * P for i in I))
 
@@ -672,7 +686,11 @@ class otimizador:
                     prob += (v[t] == v[t-1] + v[t-1]*r + x[t] * P  + pulp.lpSum(
                         W[(j, t)] * y[j][t] * P for j in TP
                     ) - pulp.lpSum(D[(i, t)] * P for i in I), f"Capital_Cost_Constraint_{t}")
-     
+                    
+        def constr_capital_cost_numb(prob, T, v, r, P):
+            for t in T:
+                prob += (v[t] == 0, f"Capital_Cost_Constraint_{t}")
+                
 
         # Montar problema 
         # Restrições BOG
@@ -687,10 +705,7 @@ class otimizador:
             constr_store_balance_bog(prob, T, s, x, y, f, D, W, I, CF, TP, S0, b, IDLE, BP)
             constr_bog_level(prob, T, IDLE, s, by, VL, VH, S_MAX, b, BI, BP)
         
-        # Outras opções
-        if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
-            constr_capital_cost(prob, T, v, r, P)
-        
+
         
         constr_store_capacity_lower_idle(prob, T, S_MIN_IDLE)
         constr_store_capacity_lower_prod(prob, T, S_MIN_PROD, SMIN_FLEX, s, IDLE, s_min)
@@ -699,12 +714,15 @@ class otimizador:
         constr_lng_cost(prob, T, J1, TP, C, LCL, LCH, lgc, ca_acc, W, CA_INI, f)
         constr_top(prob, T, TP, M, VT, cc_acc, W, CC_INI, topc)
         constr_spot_size_high(prob, T, Q2)
+        constr_capital_cost(prob, T, v, r, P, s)
         
+        
+        ###### ######################################
             
         prob.solve(solver)
         self.model = prob
         self.solver = solver
-        logging.info("Teste 6 - Problema resolvido com sucesso.") 
+        logging.info("Problema resolvido com sucesso.") 
         return 
 
 
@@ -803,13 +821,17 @@ class otimizador:
                 }
             )
             
-        if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
-            self.resultado_modelo.update(
-                {"v": otimizador.results_dict_to_list(variables_dict, var="v", index1=T)}
-            )
+        # if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V2":
+        self.resultado_modelo.update(
+            {"v": otimizador.results_dict_to_list(variables_dict, var="v", index1=T)}
+        )
 
+        # ### TESTE PARA AVALIAR FOBJ DA V2 NA RUN 1 ##
+        # self.resultado_modelo.update(
+        #         {"v": otimizador.results_dict_to_list(variables_dict, var="v", index1=T)}
+        #     )
         
-        logging.info(f"Extração finalizada. ")
+        # logging.info(f"Extração finalizada. ")
         
     def calcula_custos(self):
         

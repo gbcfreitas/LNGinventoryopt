@@ -1,0 +1,22 @@
+[project]
+name = "lngopt"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Gabriela",email = "gabriela.freitas@radixeng.com.br"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas (>=2.3.3,<3.0.0)",
+    "pulp (>=3.3.0,<4.0.0)",
+    "openpyxl (>=3.1.5,<4.0.0)",
+    "matplotlib (>=3.10.8,<4.0.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
