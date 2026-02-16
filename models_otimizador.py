@@ -426,11 +426,11 @@ class otimizador:
                 total += x[t] * PS[(t)]
                 total += pulp.lpSum(
                     LCP[(j, c, t)] * W[(j, t)] * lgc[j][c][t] for j in TP for c in C
-                )
+                ) #TODO mudar o LCP, tirar o t dele
                 total += pulp.lpSum(y[j][t] * PDEM * DEM[(j, t)] for j in TP)
                 total += pulp.lpSum(
                     topc[j][m][t] * W[(j, t)] * TPT[(j, m, t)] for j in TP for m in M
-                )
+                )#TODO mudar o TPT, tirar o t dele
 
                 if self.options["CAPCOST"] and self.options["CAPCOST_version"] == "V1":
                     total += P * r * s[t]
@@ -524,8 +524,7 @@ class otimizador:
                         <= 1,
                         f"Interval_Constraint_{t}",
                     )
-
-        # Delimitar a compra de uma única carga por intervalo definido
+    
         def constr_interval_limit_one_load(prob, T, TP, CI, y):
             """
             Garante que, para cada contrato j in TP e para cada conjunto CI_j
@@ -548,7 +547,6 @@ class otimizador:
                         )
                     )
 
-        # Lng Cost
         def constr_lng_cost(prob, T, J1, TP, C, LCL, LCH, lgc, ca_acc, W, CA_INI, f):
             """
             Define as restrições de custo de GNL (LNG cost) associadas aos contratos
@@ -591,7 +589,6 @@ class otimizador:
 
             for idx, constraint in enumerate(constr_lgc_faixa):
                 prob += constraint, f"Lgc_Faixa_Constraint_{idx}"
-
 
         def constr_top(prob, T, TP, M, VT, cc_acc, W, CC_INI, topc):
             """
@@ -671,9 +668,46 @@ class otimizador:
             for t in T:
                 prob += x[t] <= Q2 * y[len(J) - 1][t], f"Spot_Constraint_{t}"
 
+
+
+        
+        #         # Tipo de modelo
+
+        def constr_bog_level(prob, T, IDLE, s, by, VL, VH, S_MAX, b, BI, BP):
+            """
+            Define a relação entre volume atual (s) e BOG gerado (BI) a partir dos intervalos de volume definidos por VL e VH
+            
+            Referência Dissertação
+            Seção: 2.2.4 "Modeling of Boil-Off Gas (BOG) Losses"
+            Equação: Equation 19-23
+            """
+            for t in T:
+                if IDLE[t] == 1:
+                    for n in N:
+                        prob += VL[n] * by[t][n] - s[t] <= 0, f"Boglevel_Lower_{t}_{n}"
+                        prob += (
+                            VH[n] * by[t][n] + S_MAX * (1 - by[t][n]) - s[t] >= 0,
+                            f"Boglevel_Upper_{t}_{n}",
+                        )
+
+                    prob += sum(by[t][n] for n in N) == 1, f"Boglevel_Sum_{t}"
+                    prob += b[t] == sum(BI[n] * by[t][n] for n in N), f"Boglevel_b_{t}"
+
+                else:
+                    prob += b[t] == BP, f"Boglevel_b_fixed_{t}"
+                    prob += sum(by[t][n] for n in N) == 0, f"Boglevel_by_fixed_{t}"
+
+        
         def constr_store_balance_bog(
             prob, T, s, x, y, f, D, W, I, CF, TP, S0, b, IDLE, BP
         ):
+            """
+            Substitui a equação de balanço de massa para considerar as perdas por BOG, representadas pela variável b[t], que é subtraída do lado direito da equação, reduzindo o volume disponível no período t.
+            
+            Referência Dissertação
+            Seção: 2.2.4 "Modeling of Boil-Off Gas (BOG) Losses"
+            Equação: Equation 24
+            """
             for t in T:
                 if t == 0:
                     prob += (
@@ -699,31 +733,13 @@ class otimizador:
                         f"Store_Balance_Bog_Cte_Constraint_{t}",
                     )
 
-                # Tipo de modelo
-
-        def constr_bog_level(prob, T, IDLE, s, by, VL, VH, S_MAX, b, BI, BP):
-            for t in T:
-                if IDLE[t] == 1:
-                    for n in N:
-                        prob += VL[n] * by[t][n] - s[t] <= 0, f"Boglevel_Lower_{t}_{n}"
-                        prob += (
-                            VH[n] * by[t][n] + S_MAX * (1 - by[t][n]) - s[t] >= 0,
-                            f"Boglevel_Upper_{t}_{n}",
-                        )
-
-                    prob += sum(by[t][n] for n in N) == 1, f"Boglevel_Sum_{t}"
-                    prob += b[t] == sum(BI[n] * by[t][n] for n in N), f"Boglevel_b_{t}"
-
-                else:
-                    prob += b[t] == BP, f"Boglevel_b_fixed_{t}"
-                    prob += sum(by[t][n] for n in N) == 0, f"Boglevel_by_fixed_{t}"
-
-        def constr_bog_constante(prob, T, IDLE, b, BG, BP):
-            for t in T:
-                if IDLE[t] == 1:
-                    prob += b[t] == BG, f"BogConstante_b_{t}"
-                else:
-                    prob += b[t] == BP, f"BogConstante_b_fixed_{t}"
+        
+        # def constr_bog_constante(prob, T, IDLE, b, BG, BP):
+        #     for t in T:
+        #         if IDLE[t] == 1:
+        #             prob += b[t] == BG, f"BogConstante_b_{t}"
+        #         else:
+        #             prob += b[t] == BP, f"BogConstante_b_fixed_{t}"
 
         # Custo Financeiro de Capital
         def constr_capital_cost(prob, T, v, r, P, s):
@@ -744,9 +760,9 @@ class otimizador:
                         f"Capital_Cost_Constraint_{t}",
                     )
 
-        def constr_capital_cost_numb(prob, T, v, r, P):
-            for t in T:
-                prob += (v[t] == 0, f"Capital_Cost_Constraint_{t}")
+        # def constr_capital_cost_numb(prob, T, v, r, P):
+        #     for t in T:
+        #         prob += (v[t] == 0, f"Capital_Cost_Constraint_{t}")
 
         # Montar problema
         # Restrições BOG
