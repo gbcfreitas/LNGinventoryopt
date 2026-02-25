@@ -1,0 +1,8 @@
+RUN,NOME,BOG_VAR,CAPCOST,LOCK_POLICY
+1,Cen2,False,False,False
+2,Cen2,True,False,False
+3,Cen2,True,False,True
+4,Cen2,False,True,False
+5,Cen2,False,True,True
+6,Cen2,True,True,False
+7,Cen2,True,True,True

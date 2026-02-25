@@ -1,0 +1,156 @@
+{
+    "1": {
+        "options": {
+            "NOME": "Cen2",
+            "BOG_VAR": false,
+            "CAPCOST": false,
+            "LOCK_POLICY": false,
+            "TIMELIMIT": 10800,
+            "RUN": 1
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 0.728351354598999,
+        "objective_value": 766480713.5599226,
+        "custos": {
+            "custo_fixo": 18000000.0,
+            "custo_spot": 145012272.60090137,
+            "custo_lcp": 601968440.9590212,
+            "custo_demurrage": 1500000.0,
+            "custo_top": 0.0,
+            "custo_cap": 0,
+            "custo_total": 766480713.5599226
+        }
+    },
+    "2": {
+        "options": {
+            "NOME": "Cen2",
+            "BOG_VAR": true,
+            "CAPCOST": false,
+            "LOCK_POLICY": false,
+            "TIMELIMIT": 10800,
+            "RUN": 2
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 6.769445180892944,
+        "objective_value": 793639302.5141027,
+        "custos": {
+            "custo_fixo": 18000000.0,
+            "custo_spot": 296489040.21722126,
+            "custo_lcp": 476150262.2968813,
+            "custo_demurrage": 3000000.0,
+            "custo_top": 0.0,
+            "custo_cap": 0,
+            "custo_total": 793639302.5141026
+        }
+    },
+    "3": {
+        "options": {
+            "NOME": "Cen2",
+            "BOG_VAR": true,
+            "CAPCOST": false,
+            "LOCK_POLICY": true,
+            "TIMELIMIT": 10800,
+            "RUN": 3
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 1.9185538291931152,
+        "objective_value": 846513962.336609,
+        "custos": {
+            "custo_fixo": 18000000.0,
+            "custo_spot": 222045521.37758788,
+            "custo_lcp": 601968440.9590212,
+            "custo_demurrage": 1500000.0,
+            "custo_top": 0.0,
+            "custo_cap": 0,
+            "custo_total": 843513962.3366091
+        }
+    },
+    "4": {
+        "options": {
+            "NOME": "Cen2",
+            "BOG_VAR": false,
+            "CAPCOST": true,
+            "LOCK_POLICY": false,
+            "TIMELIMIT": 10800,
+            "RUN": 4
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 0.8404185771942139,
+        "objective_value": 772994581.3861209,
+        "custos": {
+            "custo_fixo": 18000000.0,
+            "custo_spot": 279278155.4035479,
+            "custo_lcp": 468617797.6502316,
+            "custo_demurrage": 1500000.0,
+            "custo_top": 0.0,
+            "custo_cap": 5953.624486899402,
+            "custo_total": 767401906.6782664
+        }
+    },
+    "5": {
+        "options": {
+            "NOME": "Cen2",
+            "BOG_VAR": false,
+            "CAPCOST": true,
+            "LOCK_POLICY": true,
+            "TIMELIMIT": 10800,
+            "RUN": 5
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 0.7537572383880615,
+        "objective_value": 790409644.5767891,
+        "custos": {
+            "custo_fixo": 18000000.0,
+            "custo_spot": 145017888.87748614,
+            "custo_lcp": 601968440.9590212,
+            "custo_demurrage": 1500000.0,
+            "custo_top": 0.0,
+            "custo_cap": 9663.083960010368,
+            "custo_total": 766495992.9204674
+        }
+    },
+    "6": {
+        "options": {
+            "NOME": "Cen2",
+            "BOG_VAR": true,
+            "CAPCOST": true,
+            "LOCK_POLICY": false,
+            "TIMELIMIT": 10800,
+            "RUN": 6
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 16.45607829093933,
+        "objective_value": 799566760.6776161,
+        "custos": {
+            "custo_fixo": 18000000.000055324,
+            "custo_spot": 296632555.0537839,
+            "custo_lcp": 476150262.2968813,
+            "custo_demurrage": 3000000.0,
+            "custo_top": 0.0,
+            "custo_cap": 5228.325443133425,
+            "custo_total": 793788045.6761637
+        }
+    },
+    "7": {
+        "options": {
+            "NOME": "Cen2",
+            "BOG_VAR": true,
+            "CAPCOST": true,
+            "LOCK_POLICY": true,
+            "TIMELIMIT": 10800,
+            "RUN": 7
+        },
+        "status": "Solu\u00e7\u00e3o \u00f3tima encontrada",
+        "solution_time": 1.8826038837432861,
+        "objective_value": 872050929.8013202,
+        "custos": {
+            "custo_fixo": 18000000.0,
+            "custo_spot": 222045521.37758785,
+            "custo_lcp": 601968440.9590212,
+            "custo_demurrage": 1500000.0,
+            "custo_top": 0.0,
+            "custo_cap": 9511.70063928067,
+            "custo_total": 843523474.0372484
+        }
+    }
+}
